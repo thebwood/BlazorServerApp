@@ -5,3 +5,4 @@
 /.vs
 /BlazorApp.Web/obj
 /BlazorApp.Web/bin/Debug/net10.0
+/BlazorApp.Web/logs

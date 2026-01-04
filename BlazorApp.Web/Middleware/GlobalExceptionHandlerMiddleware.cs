@@ -27,7 +27,13 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
+            var correlationId = context.Items["CorrelationId"]?.ToString() ?? "N/A";
+            _logger.LogError(ex, 
+                "Unhandled exception occurred. CorrelationId: {CorrelationId}, Path: {Path}, Method: {Method}", 
+                correlationId, 
+                context.Request.Path, 
+                context.Request.Method);
+            
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -45,7 +51,8 @@ public class GlobalExceptionHandlerMiddleware
                 : "An error occurred while processing your request.",
             Details = _environment.IsDevelopment() 
                 ? exception.StackTrace 
-                : null
+                : null,
+            CorrelationId = context.Items["CorrelationId"]?.ToString()
         };
 
         var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
