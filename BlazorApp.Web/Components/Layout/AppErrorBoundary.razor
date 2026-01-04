@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components.Web
+
+<ErrorBoundary>
+    <ChildContent>
+        @ChildContent
+    </ChildContent>
+    <ErrorContent Context="ex">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+            <MudPaper Elevation="3" Class="pa-6">
+                <MudStack Spacing="4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Large" />
+                        <MudText Typo="Typo.h4" Color="Color.Error">An Error Occurred</MudText>
+                    </MudStack>
+                    
+                    <MudDivider />
+                    
+                    <MudText Typo="Typo.body1">
+                        We're sorry, but something went wrong while processing your request.
+                    </MudText>
+
+                    @if (ShowDetails)
+                    {
+                        <MudExpansionPanels>
+                            <MudExpansionPanel Text="Error Details">
+                                <MudText Typo="Typo.body2" Class="mb-2">
+                                    <strong>Message:</strong> @ex.Message
+                                </MudText>
+                                @if (!string.IsNullOrEmpty(ex.StackTrace))
+                                {
+                                    <MudText Typo="Typo.caption">
+                                        <strong>Stack Trace:</strong><br/>
+                                        <pre style="white-space: pre-wrap;">@ex.StackTrace</pre>
+                                    </MudText>
+                                }
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    }
+                    
+                    <MudStack Row="true" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" 
+                                   Color="Color.Primary" 
+                                   OnClick="@(() => NavigationManager.NavigateTo("/", forceLoad: true))">
+                            Return to Home
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined" 
+                                   Color="Color.Default" 
+                                   OnClick="@(() => NavigationManager.Refresh(forceReload: true))">
+                            Refresh Page
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudContainer>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    private IWebHostEnvironment Environment { get; set; } = default!;
+
+    private bool ShowDetails => Environment.IsDevelopment();
+}

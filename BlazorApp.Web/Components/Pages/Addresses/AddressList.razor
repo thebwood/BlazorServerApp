@@ -1,0 +1,58 @@
+@page "/addresses"
+@rendermode InteractiveServer
+
+<PageTitle>Addresses</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Address Management</MudText>
+<MudText Class="mb-4">Manage your addresses with full CRUD operations.</MudText>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="/addresses/create" Class="mb-4">
+    Add New Address
+</MudButton>
+
+@if (ViewModel.IsLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+{
+    <MudAlert Severity="Severity.Error">@ViewModel.ErrorMessage</MudAlert>
+}
+else if (!ViewModel.Addresses.Any())
+{
+    <MudAlert Severity="Severity.Info">No addresses found. Click "Add New Address" to create one.</MudAlert>
+}
+else
+{
+    <MudTable Items="@ViewModel.Addresses" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@ViewModel.IsLoading" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>ID</MudTh>
+            <MudTh>Street</MudTh>
+            <MudTh>City</MudTh>
+            <MudTh>State</MudTh>
+            <MudTh>Zip Code</MudTh>
+            <MudTh>Country</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ID">@context.Id</MudTd>
+            <MudTd DataLabel="Street">@context.Street</MudTd>
+            <MudTd DataLabel="City">@context.City</MudTd>
+            <MudTd DataLabel="State">@context.State</MudTd>
+            <MudTd DataLabel="Zip Code">@context.ZipCode</MudTd>
+            <MudTd DataLabel="Country">@context.Country</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               Href="@($"/addresses/edit/{context.Id}")"
+                               Title="Edit Address" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Error" 
+                               Size="Size.Small" 
+                               OnClick="@(() => OpenDeleteDialog(context.Id))"
+                               Title="Delete Address" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}

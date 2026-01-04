@@ -1,0 +1,100 @@
+@page "/addresses/create"
+@rendermode InteractiveServer
+@using BlazorApp.Web.ViewModels
+
+<PageTitle>Create Address</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+    <MudText Typo="Typo.h3" GutterBottom="true">Create New Address</MudText>
+    <MudText Typo="Typo.body1" Class="mb-4">Fill in the form below to create a new address.</MudText>
+
+    @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+    {
+        <MudAlert Severity="Severity.Error" Class="mb-4" CloseIcon="@Icons.Material.Filled.Close" CloseIconClicked="@(() => ViewModel.ClearMessages())">
+            @ViewModel.ErrorMessage
+        </MudAlert>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewModel.SuccessMessage))
+    {
+        <MudAlert Severity="Severity.Success" Class="mb-4" CloseIcon="@Icons.Material.Filled.Close" CloseIconClicked="@(() => ViewModel.ClearMessages())">
+            @ViewModel.SuccessMessage
+        </MudAlert>
+    }
+
+    <MudPaper Class="pa-6" Elevation="3">
+        <EditForm Model="@ViewModel.Address" OnValidSubmit="HandleSubmit" FormName="CreateAddressForm">
+            <DataAnnotationsValidator />
+            
+            <MudStack Spacing="4">
+                <MudTextField @bind-Value="ViewModel.Address.Street"
+                              Label="Street Address"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Immediate="true"
+                              HelperText="Enter the street address"
+                              For="@(() => ViewModel.Address.Street)" />
+
+                <MudTextField @bind-Value="ViewModel.Address.City"
+                              Label="City"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Immediate="true"
+                              HelperText="Enter the city name"
+                              For="@(() => ViewModel.Address.City)" />
+
+                <MudTextField @bind-Value="ViewModel.Address.State"
+                              Label="State/Province"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Immediate="true"
+                              HelperText="Enter the state or province"
+                              For="@(() => ViewModel.Address.State)" />
+
+                <MudTextField @bind-Value="ViewModel.Address.ZipCode"
+                              Label="Zip/Postal Code"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Immediate="true"
+                              HelperText="Enter the zip or postal code"
+                              For="@(() => ViewModel.Address.ZipCode)" />
+
+                <MudTextField @bind-Value="ViewModel.Address.Country"
+                              Label="Country"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Immediate="true"
+                              HelperText="Enter the country name"
+                              For="@(() => ViewModel.Address.Country)" />
+
+                <MudDivider />
+
+                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Default"
+                               StartIcon="@Icons.Material.Filled.ArrowBack"
+                               OnClick="NavigateToList"
+                               Disabled="@ViewModel.IsSaving">
+                        Cancel
+                    </MudButton>
+
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               Disabled="@ViewModel.IsSaving">
+                        @if (ViewModel.IsSaving)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Create Address</span>
+                        }
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
