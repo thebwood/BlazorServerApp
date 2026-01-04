@@ -17,6 +17,9 @@ public partial class AddressList : ComponentBase
     [Inject]
     private IDialogService DialogService { get; set; } = default!;
 
+    [Inject]
+    private ILogger<AddressList> Logger { get; set; } = default!;
+
     protected AddressListViewModel ViewModel { get; set; } = default!;
 
     protected override void OnInitialized()
@@ -31,25 +34,31 @@ public partial class AddressList : ComponentBase
 
     protected async Task OpenDeleteDialog(Guid id)
     {
-        var parameters = new DialogParameters<DeleteConfirmationDialog>();
-        
-        var options = new DialogOptions 
-        { 
+        Logger.LogInformation("Opening delete confirmation dialog for address {AddressId}", id);
+
+        var options = new DialogOptions
+        {
             CloseButton = true,
             MaxWidth = MaxWidth.Small,
             FullWidth = true
         };
 
         var dialog = DialogService.Show<DeleteConfirmationDialog>(
-            "Confirm Delete", 
-            parameters, 
+            "Confirm Delete",
             options);
-        
+
         var result = await dialog.Result;
 
-        if (result != null && !result.Canceled)
+        Logger.LogInformation("Dialog result - Canceled: {Canceled}, Data: {Data}", result.Canceled, result.Data);
+
+        if (!result.Canceled)
         {
+            Logger.LogInformation("User confirmed deletion for address {AddressId}", id);
             await DeleteAddress(id);
+        }
+        else
+        {
+            Logger.LogInformation("User canceled deletion for address {AddressId}", id);
         }
     }
 
