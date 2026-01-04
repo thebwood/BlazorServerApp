@@ -1,6 +1,7 @@
 using BlazorApp.Web.Components;
 using BlazorApp.Web.Services;
 using BlazorApp.Web.Middleware;
+using BlazorApp.Web.Extensions;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,15 +12,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 
-// Configure HttpClient for API calls
-builder.Services.AddHttpClient<AddressService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7208");
-})
-.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-{
-    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-});
+// Configure HttpClient for API calls with Resilience
+builder.Services.AddApiHttpClient<AddressService>("https://localhost:7208", acceptAnyCertificate: true);
 
 // Add Rate Limiting
 builder.Services.AddCustomRateLimiting();
