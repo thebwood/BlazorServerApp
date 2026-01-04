@@ -4,3 +4,4 @@
 
 /.vs
 /BlazorApp.Web/obj
+/BlazorApp.Web/bin/Debug/net10.0
